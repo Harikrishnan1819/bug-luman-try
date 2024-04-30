@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use DateTime;
-use GuzzleHttp\Client;
 use App\Traits\HeadersTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -49,9 +48,8 @@ class RequestlogServiceProvider extends ServiceProvider
             return $value[0];
         });
 
-        // $response = Http::get(config("app.url"));
-        $response = (new Client())->get('http://localhost');
-
+        $response = Http::get(env('APP_URL'));
+      
         // Log the details
         return [
             "Protocol" => $request->server("SERVER_PROTOCOL"),
@@ -89,7 +87,7 @@ class RequestlogServiceProvider extends ServiceProvider
             "response_message" => "Project created successfully",
             "protocol" => $logDetails["Protocol"],
             "payload" => "Payload",
-            "tag" => config('config.tag'),
+            "tag" => env('TAG'),
             "meta" => [
                 "Hostname" => gethostname(),
                 "Path" => $logDetails["Path"],
@@ -98,6 +96,5 @@ class RequestlogServiceProvider extends ServiceProvider
             ],
         ];
         $response = $this->processApiResponse("/api/logs", $body);
-        dd(json_decode($response));
     }
 }
