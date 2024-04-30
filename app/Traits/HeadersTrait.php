@@ -3,6 +3,8 @@
 namespace App\Traits;
 
 use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 trait HeadersTrait
 {
@@ -18,7 +20,18 @@ trait HeadersTrait
      */
     public function processApiResponse($endPoint, $body)
     {
-        return Http::withHeaders($this->getApiHeaders())->post($this->baseURL . $endPoint, $body);
+        $client = new Client();
+    
+        try {
+            $response = $client->post($this->baseURL . $endPoint, [
+                'headers' => $this->getApiHeaders(),
+                'json' => $body,
+            ]);
+    
+            return $response->getBody()->getContents();
+        } catch (RequestException $e) {
+            return $e->getMessage();
+        }
     }
 
 
@@ -30,8 +43,8 @@ trait HeadersTrait
     private function getApiHeaders()
     {
         return [
-            'api_key' => config('app.api_key'),
-            'secret_key' => config('app.secret_key'),
+            'api_key' => env('API_KEY'),
+            'secret_key' => env('SECRET_KEY'),
             'Content-Type' => 'application/json'
         ];
     }

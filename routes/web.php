@@ -14,6 +14,6 @@
 */
 
 $router->get('/', function () use ($router) {
-    // return $router->app->version();
-    echo'hello';
+    return $router->app->version();
+    // echo'hello';
 });

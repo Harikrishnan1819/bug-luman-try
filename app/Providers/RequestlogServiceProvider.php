@@ -2,10 +2,9 @@
 
 namespace App\Providers;
 
-
-use Carbon\Carbon;
-use App\Traits\HeadersTrait;
 use DateTime;
+use GuzzleHttp\Client;
+use App\Traits\HeadersTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
@@ -50,7 +49,8 @@ class RequestlogServiceProvider extends ServiceProvider
             return $value[0];
         });
 
-        $response = Http::get(config("app.url"));
+        // $response = Http::get(config("app.url"));
+        $response = (new Client())->get('http://localhost');
 
         // Log the details
         return [
@@ -60,7 +60,7 @@ class RequestlogServiceProvider extends ServiceProvider
             "Hostname" => gethostname(),
             "Method" => $request->method(),
             "Path" => $request->path(),
-            "Status_code" => $response->status(),
+            "Status_code" => $response->getStatusCode(),
             "Status_text" => $response->getReasonPhrase(),
             "IP_Address" => $request->ip(),
             "Memory_usage" => round(memory_get_usage(true) / (1024 * 1024), 2) . " MB",
@@ -98,6 +98,6 @@ class RequestlogServiceProvider extends ServiceProvider
             ],
         ];
         $response = $this->processApiResponse("/api/logs", $body);
-        dd(json_decode($response->body()));
+        dd(json_decode($response));
     }
 }
