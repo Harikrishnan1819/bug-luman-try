@@ -37,10 +37,14 @@ class RequestlogServiceProvider extends ServiceProvider
     }
 
     /**
-     * Prepare log details.
+     * Prepare log details for a given HTTP request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
+     * This function extracts relevant details from the request and response
+     * to prepare a log entry. It collects headers, fetches additional data
+     * from the server, and formats them into an array.
+     *
+     * @param Request $request The HTTP request object containing request details.
+     * @return array An array containing various details for logging.
      */
     private function prepareLogDetails(Request $request)
     {
@@ -68,9 +72,13 @@ class RequestlogServiceProvider extends ServiceProvider
     }
 
     /**
-     * Send log to API.
+     * Send log details to the API for storage.
      *
-     * @param  array  $logDetails
+     * This function prepares a structured payload containing various log details
+     * and sends it to the specified API endpoint for storage. It constructs the
+     * payload based on the provided log details and additional metadata.
+     *
+     * @param array $logDetails An array containing various log details to be sent to the API.
      * @return void
      */
     private function sendLogToApi($logDetails)
